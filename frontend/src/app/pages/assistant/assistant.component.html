@@ -1,0 +1,72 @@
+<app-page-header title="Asistente" [subtitle]="subtitulo" />
+
+<div class="cuerpo">
+  <section class="sigbi-panel conversacion">
+
+    <div class="hilo" #hilo role="log" aria-live="polite" aria-label="Conversación con el asistente">
+
+      @if ($vacio()) {
+        <div class="sigbi-state">
+          <mat-icon class="sigbi-state__icon">auto_awesome</mat-icon>
+          <h2 class="sigbi-state__title">Pregúntame por el catálogo</h2>
+          <p class="sigbi-state__text">
+            Puedo consultar los libros, las categorías y las reservas, y responder sobre
+            ellos. No registro ni modifico nada: para eso están las pantallas de gestión.
+          </p>
+
+          <ul class="sugerencias">
+            @for (sugerencia of sugerencias; track sugerencia) {
+              <li>
+                <button mat-stroked-button type="button" (click)="usarSugerencia(sugerencia)">
+                  {{ sugerencia }}
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        @for (mensaje of $messages(); track $index) {
+          <article
+            class="turno"
+            [class.turno--usuario]="mensaje.role === 'user'"
+            [class.turno--asistente]="mensaje.role === 'assistant'"
+          >
+            @if (mensaje.pending) {
+              <p class="pensando" aria-label="El asistente está respondiendo">
+                <span class="punto"></span><span class="punto"></span><span class="punto"></span>
+              </p>
+            } @else if (mensaje.role === 'user') {
+              <p class="texto-plano">{{ mensaje.content }}</p>
+            } @else {
+              <div class="markdown" [class.aviso]="mensaje.notice" [innerHTML]="render(mensaje.content)"></div>
+            }
+          </article>
+        }
+      }
+    </div>
+
+    <form class="redactor" (submit)="$event.preventDefault(); enviar()">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Escribe tu pregunta</mat-label>
+        <textarea
+          matInput
+          rows="1"
+          maxlength="500"
+          [value]="$borrador()"
+          (input)="escribir($event)"
+          (keydown)="teclear($event)"
+        ></textarea>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        type="submit"
+        aria-label="Enviar la pregunta"
+        [disabled]="!$borrador().trim() || $sending()"
+      >
+        <mat-icon>send</mat-icon>
+        <span>Enviar</span>
+      </button>
+    </form>
+  </section>
+</div>

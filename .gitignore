@@ -1,0 +1,43 @@
+# ---- Secretos y entorno ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+application-local.yaml
+application-local.properties
+
+# ---- Backend (Maven / Java) ----
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+hs_err_pid*
+replay_pid*
+
+# ---- Frontend (Angular / Node) ----
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+npm-debug.log*
+yarn-error.log*
+
+# ---- IDE ----
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+nbproject/private/
+
+# ---- Restos de herramientas ----
+__pycache__/
+*.pyc
+*.log
+
+# ---- Sistema operativo ----
+.DS_Store
+Thumbs.db

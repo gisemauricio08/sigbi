@@ -1,0 +1,341 @@
+/* Tokens que Material 3 no trae y piezas comunes de las pantallas de gestión.
+   Ningún componente declara colores literales: todo sale de estas variables. */
+
+:root {
+  /* Escala 4/8, sin valores intermedios */
+  --sigbi-space-1: 4px;
+  --sigbi-space-2: 8px;
+  --sigbi-space-3: 12px;
+  --sigbi-space-4: 16px;
+  --sigbi-space-5: 24px;
+  --sigbi-space-6: 32px;
+  --sigbi-space-7: 48px;
+
+  --sigbi-radius-xs: 4px;
+  --sigbi-radius-sm: 8px;
+  --sigbi-radius-md: 12px;
+  --sigbi-radius-lg: 16px;
+  --sigbi-radius-xl: 28px;
+  --sigbi-radius-full: 999px;
+
+  --sigbi-sidenav-width: 248px;
+  --sigbi-topbar-height: 80px;
+  /* 56 px de objetivo táctil + 1 px de borde; el botón flotante se coloca por encima. */
+  --sigbi-bottombar-height: 57px;
+
+  /* Semáforo de estados: etiquetas suaves, nunca rótulos saturados. */
+  --sigbi-success-bg: #d1fae5;
+  --sigbi-success-fg: #047857;
+  --sigbi-warn-bg: #ffe8d4;
+  --sigbi-warn-fg: #4a1d05;
+  --sigbi-danger-bg: #fee2e2;
+  --sigbi-danger-fg: #5c0a0a;
+
+  /* Tonos de categoría; una categoría sin tono propio cae en --sigbi-cat-default-*. */
+  --sigbi-cat-narrativa-bg: #e0e7ff;
+  --sigbi-cat-narrativa-fg: #312e81;
+  --sigbi-cat-informatica-bg: #cffafe;
+  --sigbi-cat-informatica-fg: #155e75;
+  --sigbi-cat-ciencia-bg: #d1fae5;
+  --sigbi-cat-ciencia-fg: #065f46;
+  --sigbi-cat-historia-bg: #fef3c7;
+  --sigbi-cat-historia-fg: #78350f;
+  --sigbi-cat-infantil-bg: #fce7f3;
+  --sigbi-cat-infantil-fg: #9d174d;
+  --sigbi-cat-hemeroteca-bg: #e2e8f0;
+  --sigbi-cat-hemeroteca-fg: #1e293b;
+  --sigbi-cat-default-bg: var(--mat-sys-secondary-container);
+  --sigbi-cat-default-fg: var(--mat-sys-on-surface);
+
+  /* Barras de gráfico: un paso más oscuro que el chip para llegar a 3:1 sobre la superficie. */
+  --sigbi-chart-narrativa: #4f46e5;
+  --sigbi-chart-informatica: #0e7490;
+  --sigbi-chart-ciencia: #059669;
+  --sigbi-chart-historia: #d97706;
+  --sigbi-chart-infantil: #db2777;
+  --sigbi-chart-hemeroteca: #7c7ca0;
+  --sigbi-chart-default: var(--mat-sys-secondary);
+}
+
+/* Tema oscuro: mismo matiz con los papeles invertidos para conservar el contraste. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sigbi-success-bg: #064e3b;
+    --sigbi-success-fg: #a7f3d0;
+    --sigbi-warn-bg: #7c2d12;
+    --sigbi-warn-fg: #ffe8d4;
+    --sigbi-danger-bg: #7f1d1d;
+    --sigbi-danger-fg: #fee2e2;
+
+    --sigbi-cat-narrativa-bg: #312e81;
+    --sigbi-cat-narrativa-fg: #e0e7ff;
+    --sigbi-cat-informatica-bg: #155e75;
+    --sigbi-cat-informatica-fg: #cffafe;
+    --sigbi-cat-ciencia-bg: #065f46;
+    --sigbi-cat-ciencia-fg: #d1fae5;
+    --sigbi-cat-historia-bg: #78350f;
+    --sigbi-cat-historia-fg: #fef3c7;
+    --sigbi-cat-infantil-bg: #9d174d;
+    --sigbi-cat-infantil-fg: #fce7f3;
+    --sigbi-cat-hemeroteca-bg: #334155;
+    --sigbi-cat-hemeroteca-fg: #e2e8f0;
+
+    --sigbi-chart-narrativa: #6366f1;
+    --sigbi-chart-informatica: #06b6d4;
+    --sigbi-chart-ciencia: #10b981;
+    --sigbi-chart-historia: #f59e0b;
+    --sigbi-chart-infantil: #ec4899;
+    --sigbi-chart-hemeroteca: #8b8fb4;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+
+.sigbi-panel {
+  background: var(--mat-sys-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--sigbi-radius-md);
+  overflow: hidden;
+}
+
+.sigbi-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--sigbi-space-3);
+  flex-wrap: wrap;
+  padding: var(--sigbi-space-4) var(--sigbi-space-5);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.sigbi-filters .sigbi-search {
+  width: 320px;
+  max-width: 100%;
+}
+
+.sigbi-spacer {
+  flex: 1 1 auto;
+}
+
+.sigbi-table {
+  width: 100%;
+  background: var(--mat-sys-surface);
+}
+
+.sigbi-table .mat-mdc-header-row {
+  background: var(--mat-sys-surface-container-high);
+}
+
+.sigbi-table .mat-mdc-header-cell {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface);
+}
+
+.sigbi-table .mat-mdc-cell {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface);
+  border-bottom-color: var(--mat-sys-outline-variant);
+}
+
+.sigbi-table .sigbi-actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Datos que se comparan carácter a carácter: ISBN, cédula, marcas de tiempo. */
+.sigbi-mono {
+  font: var(--mat-sys-label-medium);
+  letter-spacing: 0.02em;
+}
+
+/* El color nunca es la única señal: la etiqueta siempre lleva texto. */
+.sigbi-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sigbi-space-1);
+  height: 26px;
+  padding: 0 var(--sigbi-space-3);
+  border-radius: var(--sigbi-radius-full);
+  font: var(--mat-sys-label-large);
+  white-space: nowrap;
+}
+
+.sigbi-tag--success {
+  background: var(--sigbi-success-bg);
+  color: var(--sigbi-success-fg);
+}
+
+.sigbi-tag--warn {
+  background: var(--sigbi-warn-bg);
+  color: var(--sigbi-warn-fg);
+}
+
+.sigbi-tag--danger {
+  background: var(--sigbi-danger-bg);
+  color: var(--sigbi-danger-fg);
+}
+
+.sigbi-tag--neutral {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.sigbi-cat {
+  background: var(--sigbi-cat-default-bg);
+  color: var(--sigbi-cat-default-fg);
+}
+
+.sigbi-cat--narrativa { background: var(--sigbi-cat-narrativa-bg); color: var(--sigbi-cat-narrativa-fg); }
+.sigbi-cat--informatica { background: var(--sigbi-cat-informatica-bg); color: var(--sigbi-cat-informatica-fg); }
+.sigbi-cat--ciencia { background: var(--sigbi-cat-ciencia-bg); color: var(--sigbi-cat-ciencia-fg); }
+.sigbi-cat--historia { background: var(--sigbi-cat-historia-bg); color: var(--sigbi-cat-historia-fg); }
+.sigbi-cat--infantil { background: var(--sigbi-cat-infantil-bg); color: var(--sigbi-cat-infantil-fg); }
+.sigbi-cat--hemeroteca { background: var(--sigbi-cat-hemeroteca-bg); color: var(--sigbi-cat-hemeroteca-fg); }
+
+.sigbi-chart { background: var(--sigbi-chart-default); }
+.sigbi-chart--narrativa { background: var(--sigbi-chart-narrativa); }
+.sigbi-chart--informatica { background: var(--sigbi-chart-informatica); }
+.sigbi-chart--ciencia { background: var(--sigbi-chart-ciencia); }
+.sigbi-chart--historia { background: var(--sigbi-chart-historia); }
+.sigbi-chart--infantil { background: var(--sigbi-chart-infantil); }
+.sigbi-chart--hemeroteca { background: var(--sigbi-chart-hemeroteca); }
+
+.sigbi-cat-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--sigbi-radius-full);
+  margin-right: var(--sigbi-space-2);
+  vertical-align: baseline;
+}
+
+/* Por debajo de 1024 px la tabla se sustituye por tarjetas en vez de comprimirse. */
+.sigbi-tarjetas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-3);
+  padding: var(--sigbi-space-4);
+  margin: 0;
+  list-style: none;
+}
+
+.sigbi-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-2);
+  padding: var(--sigbi-space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--sigbi-radius-md);
+  background: var(--mat-sys-surface);
+}
+
+.sigbi-tarjeta__titulo {
+  font-family: var(--mat-sys-title-large-font);
+  font-size: 1rem;
+  line-height: 1.375rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+.sigbi-tarjeta__linea {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+.sigbi-tarjeta__etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sigbi-space-2);
+  align-items: center;
+}
+
+/* Objetivo táctil de 44 px para los botones de icono. */
+.sigbi-tarjeta__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sigbi-space-2);
+  margin-top: var(--sigbi-space-1);
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  padding-top: var(--sigbi-space-2);
+}
+
+.sigbi-tarjeta__acciones .mat-mdc-icon-button {
+  --mat-icon-button-state-layer-size: 44px;
+  width: 44px;
+  height: 44px;
+}
+
+/* Botón flotante sobre la barra inferior. La clase duplicada supera la especificidad
+   de mat-fab (position: relative), que se carga después, sin recurrir a !important. */
+.sigbi-fab.sigbi-fab {
+  position: fixed;
+  right: var(--sigbi-space-4);
+  bottom: calc(var(--sigbi-bottombar-height) + var(--sigbi-space-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 10;
+}
+
+/* Aparta los controles del paginador del carril del botón flotante, que los taparía
+   con listas cortas. */
+@media (max-width: 1023px) {
+  .sigbi-panel mat-paginator {
+    padding-right: calc(56px + var(--sigbi-space-4));
+  }
+}
+
+.sigbi-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sigbi-space-3);
+  /* Conserva la altura de la tabla para que el contenido no salte al cargar. */
+  min-height: 320px;
+  padding: var(--sigbi-space-6);
+  text-align: center;
+}
+
+.sigbi-state__icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--mat-sys-outline);
+}
+
+.sigbi-state__title {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+.sigbi-state__text {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+  max-width: 44ch;
+}
+
+.sigbi-error-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--sigbi-space-3);
+  margin: var(--sigbi-space-4);
+  padding: var(--sigbi-space-3) var(--sigbi-space-4);
+  border-radius: var(--sigbi-radius-sm);
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  font: var(--mat-sys-body-medium);
+}
+
+.sigbi-field-error {
+  display: block;
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-medium);
+}

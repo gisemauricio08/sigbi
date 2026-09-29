@@ -1,0 +1,217 @@
+<app-page-header title="Nueva reserva" [subtitle]="$subtitulo()">
+  <button mat-stroked-button type="button" (click)="salir()">
+    <mat-icon>close</mat-icon>
+    <span>Salir sin guardar</span>
+  </button>
+</app-page-header>
+
+<div class="cuerpo">
+  <section class="sigbi-panel">
+
+    @if ($error()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span class="sigbi-spacer">No se pudieron cargar los datos. {{ mensajeDeError($error()) }}</span>
+        <button mat-stroked-button (click)="recargar()">Reintentar</button>
+      </div>
+    } @else if ($cargando()) {
+      <div class="sigbi-state" aria-live="polite">
+        <mat-spinner diameter="40" />
+        <p class="sigbi-state__text">Cargando clientes y catálogo...</p>
+      </div>
+    } @else {
+
+      <mat-stepper linear (selectionChange)="cambiarPaso($event.selectedIndex)">
+
+        <mat-step [completed]="$cliente() !== null" label="Cliente">
+          <div class="paso">
+            <mat-form-field class="sigbi-search" appearance="outline" subscriptSizing="dynamic">
+              <mat-icon matPrefix>search</mat-icon>
+              <input
+                matInput
+                type="search"
+                placeholder="Buscar por nombre o documento"
+                aria-label="Buscar cliente por nombre o documento"
+                [value]="$busquedaCliente()"
+                (input)="buscarCliente($event)"
+              />
+            </mat-form-field>
+
+            @if (!$clientesFiltrados().length) {
+              <div class="sigbi-state">
+                <mat-icon class="sigbi-state__icon">person_off</mat-icon>
+                <h2 class="sigbi-state__title">Ningún cliente coincide</h2>
+                <p class="sigbi-state__text">Prueba con otro nombre o con el documento completo.</p>
+              </div>
+            } @else {
+              <mat-selection-list class="lista" [multiple]="false" aria-label="Clientes">
+                @for (cliente of $clientesFiltrados(); track cliente.idClient) {
+                  <mat-list-option
+                    [value]="cliente"
+                    [selected]="$cliente()?.idClient === cliente.idClient"
+                    (click)="elegirCliente(cliente)"
+                  >
+                    <span matListItemTitle>{{ cliente.firstName }} {{ cliente.lastName }}</span>
+                    <span matListItemLine>
+                      <span class="sigbi-mono">{{ cliente.dni }}</span> - {{ cliente.email }}
+                    </span>
+                  </mat-list-option>
+                }
+              </mat-selection-list>
+            }
+          </div>
+
+          <div class="acciones">
+            <button mat-flat-button matStepperNext [disabled]="!$cliente()">
+              <span>Continuar</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
+
+        <mat-step [completed]="$libros().length > 0" label="Libros">
+          <div class="paso">
+
+            @if ($libros().length) {
+              <mat-chip-set class="elegidos" aria-label="Libros elegidos">
+                @for (libro of $libros(); track libro.idBook) {
+                  <mat-chip (removed)="quitarLibro(libro)">
+                    {{ libro.title }}
+                    <button matChipRemove [attr.aria-label]="'Quitar ' + libro.title">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                }
+              </mat-chip-set>
+            }
+
+            <div class="filtros-paso">
+              <mat-form-field class="sigbi-search" appearance="outline" subscriptSizing="dynamic">
+                <mat-icon matPrefix>search</mat-icon>
+                <input
+                  matInput
+                  type="search"
+                  placeholder="Buscar por título o autor"
+                  aria-label="Buscar libro por título o autor"
+                  [value]="$busquedaLibro()"
+                  (input)="buscarLibro($event)"
+                />
+              </mat-form-field>
+
+              <!-- Regla 2 de FEAT-002 -->
+              @if ($categoriasDisponibles().length > 1) {
+                <mat-chip-listbox aria-label="Filtrar por categoría">
+                  @for (categoria of $categoriasDisponibles(); track categoria.idCategory) {
+                    <mat-chip-option
+                      [selected]="$categoriaElegida() === categoria.idCategory"
+                      (click)="filtrarPorCategoria(categoria.idCategory)"
+                    >{{ categoria.name }}</mat-chip-option>
+                  }
+                </mat-chip-listbox>
+              }
+            </div>
+
+            @if (!$totalDisponibles()) {
+              <div class="sigbi-state">
+                <mat-icon class="sigbi-state__icon">menu_book</mat-icon>
+                <h2 class="sigbi-state__title">No hay libros disponibles</h2>
+                <p class="sigbi-state__text">
+                  Todos los libros del catálogo están reservados. Elimina una reserva para
+                  devolver sus libros y vuelve a intentarlo.
+                </p>
+              </div>
+            } @else if (!$disponibles().length) {
+              <div class="sigbi-state">
+                <mat-icon class="sigbi-state__icon">search_off</mat-icon>
+                <h2 class="sigbi-state__title">Ningún libro disponible coincide</h2>
+                <p class="sigbi-state__text">
+                  Hay {{ $totalDisponibles() }} libros disponibles, pero ninguno cumple la búsqueda.
+                </p>
+              </div>
+            } @else {
+              <mat-selection-list class="lista" aria-label="Libros disponibles">
+                @for (libro of $disponibles(); track libro.idBook) {
+                  <mat-list-option
+                    [selected]="estaElegido(libro)"
+                    (click)="alternarLibro(libro)"
+                  >
+                    <span matListItemTitle>{{ libro.title }}</span>
+                    <span matListItemLine>
+                      {{ libro.author }} -
+                      <span class="sigbi-tag" [class]="tono(libro.categoryName)">{{ libro.categoryName }}</span>
+                      <span class="sigbi-mono isbn">{{ libro.isbn }}</span>
+                    </span>
+                  </mat-list-option>
+                }
+              </mat-selection-list>
+            }
+          </div>
+
+          <div class="acciones">
+            <button mat-stroked-button matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              <span>Atrás</span>
+            </button>
+            <span class="sigbi-spacer"></span>
+            <p class="recuento">
+              {{ $libros().length }} {{ $libros().length === 1 ? 'libro elegido' : 'libros elegidos' }}
+            </p>
+            <button mat-flat-button matStepperNext [disabled]="!$libros().length">
+              <span>Continuar</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
+
+        <mat-step label="Confirmación">
+          <div class="paso resumen">
+
+            <div class="bloque">
+              <h2 class="bloque__titulo">Cliente</h2>
+              @if ($cliente(); as cliente) {
+                <p class="bloque__dato">{{ cliente.firstName }} {{ cliente.lastName }}</p>
+                <p class="bloque__detalle">
+                  Documento <span class="sigbi-mono">{{ cliente.dni }}</span> - {{ cliente.email }}
+                </p>
+              }
+            </div>
+
+            <div class="bloque">
+              <h2 class="bloque__titulo">Libros ({{ $libros().length }})</h2>
+              <ul class="libros">
+                @for (libro of $libros(); track libro.idBook) {
+                  <li>
+                    <span class="libro__titulo">{{ libro.title }}</span>
+                    <span class="bloque__detalle">{{ libro.author }}</span>
+                    <span class="sigbi-tag" [class]="tono(libro.categoryName)">{{ libro.categoryName }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div class="bloque">
+              <h2 class="bloque__titulo">Fecha</h2>
+              <p class="bloque__dato">La registra el sistema al guardar</p>
+              <p class="bloque__detalle">
+                La fecha y hora de la reserva son las del momento en que se guarda, y no se
+                pueden modificar.
+              </p>
+            </div>
+          </div>
+
+          <div class="acciones">
+            <button mat-stroked-button matStepperPrevious [disabled]="$guardando()">
+              <mat-icon>arrow_back</mat-icon>
+              <span>Atrás</span>
+            </button>
+            <span class="sigbi-spacer"></span>
+            <button class="acento" mat-flat-button (click)="confirmar()" [disabled]="$guardando()">
+              <mat-icon>check</mat-icon>
+              <span>{{ $guardando() ? 'Guardando...' : 'Confirmar reserva' }}</span>
+            </button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    }
+  </section>
+</div>

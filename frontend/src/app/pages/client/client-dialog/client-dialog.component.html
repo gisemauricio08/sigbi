@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>{{ $esEdicion() ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
+
+<form [formRoot]="clientForm.$form" (submit)="guardar()">
+  <mat-dialog-content>
+
+    @if ($errorGeneral()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ $errorGeneral() }}</span>
+      </div>
+    }
+
+    <div class="rejilla">
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Nombres</mat-label>
+          <input matInput [formField]="clientForm.$form.firstName" />
+        </mat-form-field>
+        @if (mensajeDe(clientForm.$form.firstName()) || errorDe('firstName')) {
+          <small class="sigbi-field-error">{{ errorDe('firstName') || mensajeDe(clientForm.$form.firstName()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Apellidos</mat-label>
+          <input matInput [formField]="clientForm.$form.lastName" />
+        </mat-form-field>
+        @if (mensajeDe(clientForm.$form.lastName()) || errorDe('lastName')) {
+          <small class="sigbi-field-error">{{ errorDe('lastName') || mensajeDe(clientForm.$form.lastName()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Documento</mat-label>
+          <input matInput class="sigbi-mono" inputmode="numeric" [formField]="clientForm.$form.dni" />
+        </mat-form-field>
+        @if (mensajeDe(clientForm.$form.dni()) || errorDe('dni')) {
+          <small class="sigbi-field-error">{{ errorDe('dni') || mensajeDe(clientForm.$form.dni()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Correo</mat-label>
+          <input matInput type="email" [formField]="clientForm.$form.email" />
+        </mat-form-field>
+        @if (mensajeDe(clientForm.$form.email()) || errorDe('email')) {
+          <small class="sigbi-field-error">{{ errorDe('email') || mensajeDe(clientForm.$form.email()) }}</small>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="clientForm.isInvalid() || $guardando()">
+      <mat-icon>save</mat-icon>
+      <span>Guardar</span>
+    </button>
+  </mat-dialog-actions>
+</form>

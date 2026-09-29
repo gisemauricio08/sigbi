@@ -1,0 +1,25 @@
+.rejilla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-4);
+  padding-top: var(--sigbi-space-2);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-1);
+}
+
+.campo mat-form-field {
+  width: 100%;
+}
+
+.interruptor {
+  gap: var(--sigbi-space-2);
+}
+
+.ayuda {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}

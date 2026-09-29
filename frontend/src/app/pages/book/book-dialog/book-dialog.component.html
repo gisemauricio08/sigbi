@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>{{ $esEdicion() ? 'Editar libro' : 'Nuevo libro' }}</h2>
+
+<form [formRoot]="bookForm.$form" (submit)="guardar()">
+  <mat-dialog-content>
+
+    @if ($errorGeneral()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ $errorGeneral() }}</span>
+      </div>
+    }
+
+    <div class="rejilla">
+
+      <div class="campo campo--ancho">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Título</mat-label>
+          <input matInput [formField]="bookForm.$form.title" />
+        </mat-form-field>
+        @if (mensajeDe(bookForm.$form.title()) || errorDe('title')) {
+          <small class="sigbi-field-error">{{ errorDe('title') || mensajeDe(bookForm.$form.title()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Autor</mat-label>
+          <input matInput [formField]="bookForm.$form.author" />
+        </mat-form-field>
+        @if (mensajeDe(bookForm.$form.author()) || errorDe('author')) {
+          <small class="sigbi-field-error">{{ errorDe('author') || mensajeDe(bookForm.$form.author()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>ISBN</mat-label>
+          <input matInput class="sigbi-mono" inputmode="numeric" [formField]="bookForm.$form.isbn" />
+        </mat-form-field>
+        @if (mensajeDe(bookForm.$form.isbn()) || errorDe('isbn')) {
+          <small class="sigbi-field-error">{{ errorDe('isbn') || mensajeDe(bookForm.$form.isbn()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Categoría</mat-label>
+          <mat-select [formField]="bookForm.$form.idCategory">
+            @for (categoria of $categorias(); track categoria.idCategory) {
+              <mat-option [value]="categoria.idCategory">
+                {{ categoria.name }}@if (!esActiva(categoria.idCategory)) {<span> (inactiva)</span>}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (mensajeDe(bookForm.$form.idCategory()) || errorDe('idCategory')) {
+          <small class="sigbi-field-error">{{ errorDe('idCategory') || mensajeDe(bookForm.$form.idCategory()) }}</small>
+        }
+      </div>
+
+      <div class="campo interruptor">
+        <mat-slide-toggle [formField]="bookForm.$form.available">Disponible</mat-slide-toggle>
+        <small class="ayuda">
+          Un libro deja de estar disponible al reservarse; aquí se corrige a mano si hiciera falta.
+        </small>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="bookForm.isInvalid() || $guardando()">
+      <mat-icon>save</mat-icon>
+      <span>Guardar</span>
+    </button>
+  </mat-dialog-actions>
+</form>

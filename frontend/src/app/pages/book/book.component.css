@@ -1,0 +1,34 @@
+.cuerpo {
+  padding: 0 var(--sigbi-space-6) var(--sigbi-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+/* El título se lleva el ancho sobrante; ISBN y disponibilidad se ajustan a su contenido. */
+.sigbi-table .col-titulo {
+  min-width: 22ch;
+}
+
+.sigbi-table .col-isbn,
+.sigbi-table .col-disponibilidad {
+  white-space: nowrap;
+  width: 1%;
+}
+
+@media (max-width: 1023px) {
+  .cuerpo {
+    padding: 0 var(--sigbi-space-4) var(--sigbi-space-4);
+  }
+}
+
+/* En escritorio Categorías ya está en el menú lateral. */
+@media (min-width: 1024px) {
+  .enlace-categorias {
+    display: none;
+  }
+}

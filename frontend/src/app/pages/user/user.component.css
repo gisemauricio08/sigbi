@@ -1,0 +1,39 @@
+.cuerpo {
+  padding: 0 var(--sigbi-space-6) var(--sigbi-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+/* Un correo largo se parte antes que desbordar la tarjeta. */
+.correo {
+  overflow-wrap: anywhere;
+}
+
+.propia {
+  margin-left: var(--sigbi-space-1);
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.roles {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--sigbi-space-1);
+}
+
+/* ADMIN se destaca con el contenedor primario; el texto sigue siendo la señal. */
+.rol--admin {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+@media (max-width: 1023px) {
+  .cuerpo {
+    padding: 0 var(--sigbi-space-4) var(--sigbi-space-4);
+  }
+}

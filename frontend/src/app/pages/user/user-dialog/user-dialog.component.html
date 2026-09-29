@@ -1,0 +1,114 @@
+<h2 mat-dialog-title>{{ $esEdicion() ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+
+<form [formRoot]="userForm.$form" (submit)="guardar()">
+  <mat-dialog-content>
+
+    @if ($errorGeneral()) {
+      <div class="sigbi-error-banner banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ $errorGeneral() }}</span>
+      </div>
+    }
+
+    <div class="rejilla">
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Correo electrónico</mat-label>
+          <!-- Sin estos atributos el teclado del teléfono "corrige" el correo. autocomplete="off"
+               porque la cuenta es de otra persona. -->
+          <input matInput type="email" inputmode="email" autocapitalize="none"
+                 autocorrect="off" spellcheck="false" autocomplete="off"
+                 [formField]="userForm.$form.email" />
+        </mat-form-field>
+        @if ($esEdicion()) {
+          <small class="ayuda">El correo es la identidad de Supabase Auth y no se edita.</small>
+        }
+        @if (mensajeDe(userForm.$form.email()) || errorDe('email')) {
+          <small class="sigbi-field-error">{{ errorDe('email') || mensajeDe(userForm.$form.email()) }}</small>
+        }
+      </div>
+
+      @if (!$esEdicion()) {
+        <div class="campo">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Contraseña</mat-label>
+            <input matInput [type]="$verContrasena() ? 'text' : 'password'"
+                   autocomplete="new-password" [formField]="userForm.$form.password" />
+            <!-- Sin type="button" el botón enviaría el formulario. -->
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="alternarContrasena()"
+              [attr.aria-label]="$verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-pressed]="$verContrasena()"
+            >
+              <mat-icon>{{ $verContrasena() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+          @if (mensajeDe(userForm.$form.password()) || errorDe('password')) {
+            <small class="sigbi-field-error">{{ errorDe('password') || mensajeDe(userForm.$form.password()) }}</small>
+          } @else {
+            <small class="ayuda">Al menos 6 caracteres. Si el correo ya tiene cuenta en Supabase, se vincula y conserva su contraseña.</small>
+          }
+        </div>
+      }
+
+      <fieldset class="campo roles">
+        <legend class="roles__titulo">Roles</legend>
+
+        @if ($errorRoles()) {
+          <div class="sigbi-error-banner banner" role="alert">
+            <mat-icon>error</mat-icon>
+            <span class="sigbi-spacer">No se pudieron cargar los roles. {{ mensajeDeError($errorRoles()) }}</span>
+            <button mat-stroked-button type="button" (click)="recargarRoles()">Reintentar</button>
+          </div>
+        } @else if ($cargandoRoles()) {
+          <div class="roles__cargando" aria-live="polite">
+            <mat-spinner diameter="24" />
+            <span class="ayuda">Cargando los roles...</span>
+          </div>
+        } @else {
+          @for (rol of $roles(); track rol.idRole) {
+            <div class="rol">
+              <mat-checkbox
+                [checked]="marcado(rol.name)"
+                [disabled]="bloqueado(rol.name)"
+                (change)="marcarRol(rol.name, $event.checked)"
+              >{{ etiqueta(rol.name) }}</mat-checkbox>
+              <small class="ayuda rol__descripcion">{{ rol.description }}</small>
+            </div>
+          }
+        }
+
+        @if (mensajeDe(userForm.$form.roles()) || errorDe('roles')) {
+          <small class="sigbi-field-error">{{ errorDe('roles') || mensajeDe(userForm.$form.roles()) }}</small>
+        }
+      </fieldset>
+
+      @if ($esEdicion()) {
+        <div class="campo interruptor">
+          <mat-slide-toggle [formField]="userForm.$form.enabled">Activo</mat-slide-toggle>
+          <small class="ayuda">
+            @if ($esPropia()) {
+              Es tu cuenta: no puedes desactivarla ni quitarte el rol de Administrador.
+              Otro administrador sí puede hacerlo.
+            } @else {
+              Una cuenta deshabilitada deja de poder usar SIGBI. No se borra: se puede
+              volver a activar.
+            }
+          </small>
+        </div>
+      }
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="userForm.isInvalid() || $guardando()">
+      <mat-icon>save</mat-icon>
+      <span>Guardar</span>
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,180 @@
+<app-page-header title="Categorías" subtitle="Clasificación del catálogo">
+  @if (!$esEstrecha()) {
+    <button mat-flat-button (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon>
+      <span>Nueva categoría</span>
+    </button>
+  }
+</app-page-header>
+
+<div class="cuerpo">
+  <section class="sigbi-panel">
+
+    <div class="sigbi-filters">
+      <mat-form-field class="sigbi-search" appearance="outline" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          type="search"
+          placeholder="Buscar por nombre o descripción"
+          aria-label="Buscar por nombre o descripción"
+          [value]="$busqueda()"
+          (input)="buscar($event)"
+        />
+      </mat-form-field>
+
+      <mat-button-toggle-group
+        [value]="$estado()"
+        (change)="cambiarEstado($event.value)"
+        aria-label="Filtrar por estado"
+        hideSingleSelectionIndicator
+      >
+        <mat-button-toggle value="todas">Todas</mat-button-toggle>
+        <mat-button-toggle value="activas">Activas</mat-button-toggle>
+        <mat-button-toggle value="inactivas">Inactivas</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    @if ($error()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span class="sigbi-spacer">No se pudieron cargar las categorías. {{ mensajeDeError($error()) }}</span>
+        <button mat-stroked-button (click)="recargar()">Reintentar</button>
+      </div>
+    } @else if ($loading()) {
+      <div class="sigbi-state" aria-live="polite">
+        <mat-spinner diameter="40" />
+        <p class="sigbi-state__text">Cargando las categorías...</p>
+      </div>
+    } @else if (!$categories().length) {
+      <div class="sigbi-state">
+        <mat-icon class="sigbi-state__icon">sell</mat-icon>
+        <h2 class="sigbi-state__title">Aún no hay categorías</h2>
+        <p class="sigbi-state__text">
+          Crea la primera para poder clasificar los libros del catálogo.
+        </p>
+        <button mat-flat-button (click)="abrirDialogo()">
+          <mat-icon>add</mat-icon>
+          <span>Nueva categoría</span>
+        </button>
+      </div>
+    } @else if (!$filtradas().length) {
+      <div class="sigbi-state">
+        <mat-icon class="sigbi-state__icon">search_off</mat-icon>
+        <h2 class="sigbi-state__title">Ninguna categoría coincide</h2>
+        <p class="sigbi-state__text">
+          Hay {{ $categories().length }} categorías, pero ninguna cumple el filtro actual.
+        </p>
+        <button mat-stroked-button (click)="limpiarFiltros()">
+          <mat-icon>filter_alt_off</mat-icon>
+          <span>Limpiar filtros</span>
+        </button>
+      </div>
+    } @else {
+
+      @if ($esEstrecha()) {
+        <ul class="sigbi-tarjetas">
+          @for (categoria of $enPagina(); track categoria.idCategory) {
+            <li class="sigbi-tarjeta">
+              <p class="sigbi-tarjeta__titulo">
+                <span class="sigbi-cat-dot" [class]="tono(categoria.name)" aria-hidden="true"></span>
+                {{ categoria.name }}
+              </p>
+              <p class="sigbi-tarjeta__linea">{{ categoria.description }}</p>
+
+              <div class="sigbi-tarjeta__etiquetas">
+                <span class="sigbi-tag" [class.sigbi-tag--success]="categoria.status" [class.sigbi-tag--neutral]="!categoria.status">
+                  {{ categoria.status ? 'Activa' : 'Inactiva' }}
+                </span>
+                <span class="sigbi-tarjeta__linea">
+                  <span class="sigbi-mono">{{ categoria.bookCount ?? 0 }}</span>
+                  {{ categoria.bookCount === 1 ? 'libro' : 'libros' }}
+                </span>
+              </div>
+
+              <div class="sigbi-tarjeta__acciones">
+                <button mat-icon-button [attr.aria-label]="'Editar ' + categoria.name" (click)="abrirDialogo(categoria.idCategory)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button [attr.aria-label]="'Eliminar ' + categoria.name" (click)="eliminar(categoria)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+      <div class="tabla-scroll">
+        <table mat-table class="sigbi-table" [dataSource]="dataSource" matSort matSortActive="name" matSortDirection="asc">
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let categoria" class="nombre">
+              <span class="sigbi-cat-dot" [class]="tono(categoria.name)" aria-hidden="true"></span>
+              {{ categoria.name }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Descripción</th>
+            <td mat-cell *matCellDef="let categoria" class="descripcion">{{ categoria.description }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+            <td mat-cell *matCellDef="let categoria">
+              <span class="sigbi-tag" [class.sigbi-tag--success]="categoria.status" [class.sigbi-tag--neutral]="!categoria.status">
+                {{ categoria.status ? 'Activa' : 'Inactiva' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="bookCount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Libros</th>
+            <td mat-cell *matCellDef="let categoria"><span class="sigbi-mono">{{ categoria.bookCount ?? 0 }}</span></td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="sigbi-actions-cell">Acciones</th>
+            <td mat-cell *matCellDef="let categoria" class="sigbi-actions-cell">
+              <button
+                mat-icon-button
+                [attr.aria-label]="'Editar ' + categoria.name"
+                [matTooltip]="'Editar ' + categoria.name"
+                (click)="abrirDialogo(categoria.idCategory)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                [attr.aria-label]="'Eliminar ' + categoria.name"
+                [matTooltip]="'Eliminar ' + categoria.name"
+                (click)="eliminar(categoria)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let fila; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      }
+
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        [pageSize]="$pagina().tamano"
+        [length]="$filtradas().length"
+        (page)="cambiarPagina($event)"
+        aria-label="Paginación de categorías"
+      />
+    }
+  </section>
+
+  @if ($esEstrecha()) {
+    <button class="sigbi-fab" mat-fab aria-label="Nueva categoría" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
+</div>

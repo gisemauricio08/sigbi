@@ -1,0 +1,14 @@
+<app-error-page icono="lock_person" titulo="Sin permiso" [mensaje]="$mensaje()" [pie]="$pie()">
+  @if ($tieneAcceso()) {
+    <a mat-flat-button routerLink="/pages/dashboard">
+      <mat-icon>dashboard</mat-icon>
+      Volver al panel
+    </a>
+  }
+  @if (conSesion) {
+    <button mat-stroked-button type="button" (click)="salir()">
+      <mat-icon>logout</mat-icon>
+      Cerrar sesión
+    </button>
+  }
+</app-error-page>

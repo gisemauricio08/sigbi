@@ -1,0 +1,175 @@
+.cuerpo {
+  padding: 0 var(--sigbi-space-6) var(--sigbi-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Acento terciario, reservado a "Nueva reserva". */
+.acento {
+  --mat-button-filled-container-color: var(--mat-sys-tertiary);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-tertiary);
+  --mat-button-filled-icon-color: var(--mat-sys-on-tertiary);
+}
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-1);
+  padding: var(--sigbi-space-5);
+  background: var(--mat-sys-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--sigbi-radius-md);
+}
+
+.tarjeta__icono {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--sigbi-radius-sm);
+  margin-bottom: var(--sigbi-space-2);
+}
+
+.tarjeta__icono--primario {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.tarjeta__icono--exito {
+  background: var(--sigbi-success-bg);
+  color: var(--sigbi-success-fg);
+}
+
+.tarjeta__icono--aviso {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.tarjeta__icono--acento {
+  background: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
+}
+
+.tarjeta__rotulo {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+.tarjeta__cifra {
+  font: var(--mat-sys-display-small);
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+.tarjeta__detalle {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+.grafico__cabecera {
+  padding: var(--sigbi-space-5) var(--sigbi-space-5) var(--sigbi-space-3);
+}
+
+.grafico__titulo {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+.grafico__bajada {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 2px 0 0;
+}
+
+.barras {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--sigbi-space-5);
+}
+
+.barras tr {
+  height: 40px;
+}
+
+.barras__nombre {
+  width: 1%;
+  white-space: nowrap;
+  text-align: left;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface);
+  font-weight: 400;
+  padding: 0 var(--sigbi-space-4) 0 var(--sigbi-space-5);
+}
+
+.barras__nombre .sigbi-tag {
+  margin-left: var(--sigbi-space-2);
+  height: 22px;
+  font-size: 11px;
+}
+
+.barras__celda {
+  width: 100%;
+  padding: 0;
+}
+
+.barras__pista {
+  height: 14px;
+  border-radius: var(--sigbi-radius-xs);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.barras__barra {
+  height: 100%;
+  min-width: 2px;
+  border-radius: 0 var(--sigbi-radius-xs) var(--sigbi-radius-xs) 0;
+  transition: filter 120ms ease;
+}
+
+.barras__barra:hover {
+  filter: brightness(1.08);
+}
+
+.barras__valor {
+  width: 1%;
+  text-align: right;
+  padding: 0 var(--sigbi-space-5) 0 var(--sigbi-space-4);
+  color: var(--mat-sys-on-surface);
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 1279px) {
+  .indicadores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .cuerpo {
+    padding: 0 var(--sigbi-space-4) var(--sigbi-space-4);
+  }
+}
+
+@media (max-width: 599px) {
+  .indicadores {
+    grid-template-columns: 1fr;
+  }
+}

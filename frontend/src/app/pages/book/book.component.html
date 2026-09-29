@@ -1,0 +1,187 @@
+<app-page-header title="Libros" subtitle="Catálogo completo de la biblioteca">
+  @if (!$esEstrecha()) {
+    <button mat-flat-button (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon>
+      <span>Nuevo libro</span>
+    </button>
+  }
+</app-page-header>
+
+<div class="cuerpo">
+  <section class="sigbi-panel">
+
+    <div class="sigbi-filters">
+      <mat-form-field class="sigbi-search" appearance="outline" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          type="search"
+          placeholder="Buscar por título o autor"
+          aria-label="Buscar por título o autor"
+          [value]="$busqueda()"
+          (input)="buscar($event)"
+        />
+      </mat-form-field>
+
+      @if ($categorias().length) {
+        <mat-chip-listbox multiple aria-label="Filtrar por categoría" (change)="cambiarCategorias($event)">
+          @for (categoria of $categorias(); track categoria.idCategory) {
+            <mat-chip-option
+              [value]="categoria.idCategory"
+              [selected]="$categoriasElegidas().includes(categoria.idCategory)"
+            >{{ categoria.name }}</mat-chip-option>
+          }
+        </mat-chip-listbox>
+      }
+
+      <span class="sigbi-spacer"></span>
+
+      <a class="enlace-categorias" mat-stroked-button routerLink="/pages/category">
+        <mat-icon>sell</mat-icon>
+        <span>Categorías</span>
+      </a>
+    </div>
+
+    @if ($error()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span class="sigbi-spacer">No se pudo cargar el catálogo. {{ mensajeDeError($error()) }}</span>
+        <button mat-stroked-button (click)="recargar()">Reintentar</button>
+      </div>
+    } @else if ($loading()) {
+      <div class="sigbi-state" aria-live="polite">
+        <mat-spinner diameter="40" />
+        <p class="sigbi-state__text">Cargando el catálogo...</p>
+      </div>
+    } @else if (!$books().length) {
+      <div class="sigbi-state">
+        <mat-icon class="sigbi-state__icon">menu_book</mat-icon>
+        <h2 class="sigbi-state__title">Aún no hay libros</h2>
+        <p class="sigbi-state__text">
+          Cuando registres el primero aparecerá aquí con su autor, su categoría y su disponibilidad.
+        </p>
+        <button mat-flat-button (click)="abrirDialogo()">
+          <mat-icon>add</mat-icon>
+          <span>Nuevo libro</span>
+        </button>
+      </div>
+    } @else if (!$filtrados().length) {
+      <div class="sigbi-state">
+        <mat-icon class="sigbi-state__icon">search_off</mat-icon>
+        <h2 class="sigbi-state__title">Ningún libro coincide</h2>
+        <p class="sigbi-state__text">
+          Hay {{ $books().length }} libros en el catálogo, pero ninguno cumple el filtro actual.
+        </p>
+        <button mat-stroked-button (click)="limpiarFiltros()">
+          <mat-icon>filter_alt_off</mat-icon>
+          <span>Limpiar filtros</span>
+        </button>
+      </div>
+    } @else {
+
+      @if ($esEstrecha()) {
+        <ul class="sigbi-tarjetas">
+          @for (libro of $enPagina(); track libro.idBook) {
+            <li class="sigbi-tarjeta">
+              <p class="sigbi-tarjeta__titulo">{{ libro.title }}</p>
+              <p class="sigbi-tarjeta__linea">{{ libro.author }}</p>
+
+              <div class="sigbi-tarjeta__etiquetas">
+                <span class="sigbi-tag" [class]="tono(libro.categoryName)">{{ libro.categoryName }}</span>
+                <span class="sigbi-tag" [class.sigbi-tag--success]="libro.available" [class.sigbi-tag--warn]="!libro.available">
+                  {{ libro.available ? 'Disponible' : 'Reservado' }}
+                </span>
+                <span class="sigbi-mono">{{ libro.isbn }}</span>
+              </div>
+
+              <div class="sigbi-tarjeta__acciones">
+                <button mat-icon-button [attr.aria-label]="'Editar ' + libro.title" (click)="abrirDialogo(libro.idBook)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button [attr.aria-label]="'Eliminar ' + libro.title" (click)="eliminar(libro)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+      <div class="tabla-scroll">
+        <table mat-table class="sigbi-table" [dataSource]="dataSource" matSort matSortActive="title" matSortDirection="asc">
+
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-titulo">Título</th>
+            <td mat-cell *matCellDef="let libro" class="col-titulo">{{ libro.title }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="author">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Autor</th>
+            <td mat-cell *matCellDef="let libro">{{ libro.author }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="isbn">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-isbn">ISBN</th>
+            <td mat-cell *matCellDef="let libro" class="col-isbn"><span class="sigbi-mono">{{ libro.isbn }}</span></td>
+          </ng-container>
+
+          <ng-container matColumnDef="categoryName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+            <td mat-cell *matCellDef="let libro">
+              <span class="sigbi-tag" [class]="tono(libro.categoryName)">{{ libro.categoryName }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="available">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-disponibilidad">Disponibilidad</th>
+            <td mat-cell *matCellDef="let libro" class="col-disponibilidad">
+              <!-- Reservado lleva el tono de aviso, no el rojo: no es un error. -->
+              <span class="sigbi-tag" [class.sigbi-tag--success]="libro.available" [class.sigbi-tag--warn]="!libro.available">
+                {{ libro.available ? 'Disponible' : 'Reservado' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="sigbi-actions-cell">Acciones</th>
+            <td mat-cell *matCellDef="let libro" class="sigbi-actions-cell">
+              <button
+                mat-icon-button
+                [attr.aria-label]="'Editar ' + libro.title"
+                [matTooltip]="'Editar ' + libro.title"
+                (click)="abrirDialogo(libro.idBook)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                [attr.aria-label]="'Eliminar ' + libro.title"
+                [matTooltip]="'Eliminar ' + libro.title"
+                (click)="eliminar(libro)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let fila; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      }
+
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        [pageSize]="$pagina().tamano"
+        [length]="$filtrados().length"
+        (page)="cambiarPagina($event)"
+        aria-label="Paginación del catálogo"
+      />
+    }
+  </section>
+
+  @if ($esEstrecha()) {
+    <button class="sigbi-fab" mat-fab aria-label="Nuevo libro" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
+</div>

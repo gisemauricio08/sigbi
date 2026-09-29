@@ -1,0 +1,30 @@
+.cuerpo {
+  padding: 0 var(--sigbi-space-6) var(--sigbi-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+/* Punto y nombre forman una unidad: sin esto el punto se queda solo en una línea. */
+.nombre {
+  white-space: nowrap;
+}
+
+/* Por encima de 30ch la tabla desborda el panel; la descripción (hasta 150 caracteres) se
+   corta con elipsis. */
+.descripcion {
+  max-width: 30ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .cuerpo {
+    padding: 0 var(--sigbi-space-4) var(--sigbi-space-4);
+  }
+}

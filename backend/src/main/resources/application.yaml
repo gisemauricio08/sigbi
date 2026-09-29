@@ -1,0 +1,62 @@
+server:
+  #PORT (lo inyecta la plataforma) manda sobre SERVER_PORT
+  port: ${PORT:${SERVER_PORT:8080}}
+spring:
+  #optional: en un despliegue no hay .env; las variables de entorno mandan sobre el fichero
+  config:
+    import: optional:file:.env[.properties]
+
+  application:
+    name: sigbi-backend
+  messages:
+    encoding: UTF-8
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #Mismo proyecto que app.supabase.url, o todo será 401 tras un login correcto
+          issuer-uri: ${SUPABASE_ISSUER_URI}
+  jpa:
+    show-sql: false
+    #Las colecciones perezosas van con JOIN FETCH; open-in-view escondería el LazyInitializationException
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: org.postgresql.Driver    
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      #El Session Pooler de Supabase admite 15 clientes: con 10 por defecto, dos instancias
+      #a la vez (despliegue solapado, IDE + local) dan EMAXCONNSESSION
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+  ai:
+    openai:
+      #Vacía por defecto para que el arranque no falle: AgentController responde "no configurado"
+      api-key: ${OPENAI_API_KEY:}
+      #Cualquier API compatible con OpenAI, con /v1 incluido. El modelo tiene que admitir tools
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
+      chat:
+        #chat.model y no openai.model: el chat ignora esta última y usaría su modelo por defecto
+        model: ${OPENAI_MODEL:gpt-4o-mini}
+app:
+  auth:
+    #false abre /v1/** sin token
+    enabled: ${AUTH_ENABLED:true}
+    #cookie | bearer. Igual que environment.AUTH_MODE del frontend
+    mode: ${AUTH_MODE:bearer}
+    cookie:
+      secure: ${AUTH_COOKIE_SECURE:false}          # true en producción (HTTPS)
+      same-site: ${AUTH_COOKIE_SAME_SITE:Lax}      # None si el frontend vive en otro dominio (exige secure: true)
+  front:    
+    url: ${FRONT_URL}
+  supabase:    
+    url: ${SUPABASE_URL}    
+    anon-key: ${SUPABASE_ANON_KEY}    
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
+  bootstrap:
+    #Primer ADMIN: solo se usan si no hay ninguno habilitado; vacías, no se crea
+    admin:
+      email: ${BOOTSTRAP_ADMIN_EMAIL:}
+      password: ${BOOTSTRAP_ADMIN_PASSWORD:}

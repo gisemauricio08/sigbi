@@ -1,0 +1,167 @@
+// Sobrescribe los tokens --mat-sys-* con la identidad de SIGBI; los componentes solo
+// usan tokens. Los valores oscuros se eligen aparte, no son una inversión de los claros.
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+
+  @include mat.theme(
+    (
+      // Las paletas solo siembran la estructura; el color real lo fija el bloque de abajo.
+      color: (
+        primary: mat.$violet-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (
+        brand-family: 'Lora',
+        plain-family: 'IBM Plex Sans',
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      // Filas de tabla de 48 px sin ajustar alturas a mano.
+      density: -1,
+    )
+  );
+
+  --mat-sys-primary: #4f46e5;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #e0e7ff;
+  --mat-sys-on-primary-container: #1e1b4b;
+  --mat-sys-inverse-primary: #a5b4fc;
+
+  --mat-sys-secondary: #5b5b7a;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: #dde0f5;
+  --mat-sys-on-secondary-container: #1b1b34;
+
+  --mat-sys-tertiary: #c2410c;
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-tertiary-container: #ffe8d4;
+  --mat-sys-on-tertiary-container: #4a1d05;
+
+  --mat-sys-surface: #ffffff;
+  --mat-sys-background: #ffffff;
+  --mat-sys-on-background: #1b1b34;
+  --mat-sys-surface-dim: #e4e9fb;
+  --mat-sys-surface-bright: #ffffff;
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container-low: #f6f7fe;
+  --mat-sys-surface-container: #eef1fd;
+  --mat-sys-surface-container-high: #e4e9fb;
+  --mat-sys-surface-container-highest: #dbe1f8;
+  --mat-sys-on-surface: #1b1b34;
+  --mat-sys-surface-variant: #dde0f5;
+  --mat-sys-on-surface-variant: #4a4a6a;
+  --mat-sys-outline: #7c7ca0;
+  --mat-sys-outline-variant: #c5cbea;
+  --mat-sys-scrim: #000000;
+  --mat-sys-shadow: #000000;
+  --mat-sys-inverse-surface: #30304f;
+  --mat-sys-inverse-on-surface: #f2f3fd;
+
+  // Error: solo para lo que el usuario tiene que corregir.
+  --mat-sys-error: #b3261e;
+  --mat-sys-on-error: #ffffff;
+  --mat-sys-error-container: #fee2e2;
+  --mat-sys-on-error-container: #5c0a0a;
+
+  // Solo se redefinen los siete estilos de texto propios de SIGBI.
+  --mat-sys-display-small: 600 2.25rem / 2.75rem Lora, serif;
+  --mat-sys-display-small-font: Lora, serif;
+  --mat-sys-display-small-size: 2.25rem;
+  --mat-sys-display-small-line-height: 2.75rem;
+  --mat-sys-display-small-weight: 600;
+
+  --mat-sys-headline-medium: 600 1.75rem / 2.25rem Lora, serif;
+  --mat-sys-headline-medium-font: Lora, serif;
+  --mat-sys-headline-medium-size: 1.75rem;
+  --mat-sys-headline-medium-line-height: 2.25rem;
+  --mat-sys-headline-medium-weight: 600;
+
+  --mat-sys-title-large: 500 1.375rem / 1.75rem 'IBM Plex Sans', sans-serif;
+  --mat-sys-title-large-font: 'IBM Plex Sans', sans-serif;
+  --mat-sys-title-large-size: 1.375rem;
+  --mat-sys-title-large-line-height: 1.75rem;
+  --mat-sys-title-large-weight: 500;
+
+  --mat-sys-body-large: 400 1rem / 1.5rem 'IBM Plex Sans', sans-serif;
+  --mat-sys-body-large-font: 'IBM Plex Sans', sans-serif;
+  --mat-sys-body-large-size: 1rem;
+  --mat-sys-body-large-line-height: 1.5rem;
+  --mat-sys-body-large-weight: 400;
+
+  --mat-sys-body-medium: 400 0.875rem / 1.25rem 'IBM Plex Sans', sans-serif;
+  --mat-sys-body-medium-font: 'IBM Plex Sans', sans-serif;
+  --mat-sys-body-medium-size: 0.875rem;
+  --mat-sys-body-medium-line-height: 1.25rem;
+  --mat-sys-body-medium-weight: 400;
+
+  --mat-sys-label-large: 500 0.875rem / 1.25rem 'IBM Plex Sans', sans-serif;
+  --mat-sys-label-large-font: 'IBM Plex Sans', sans-serif;
+  --mat-sys-label-large-size: 0.875rem;
+  --mat-sys-label-large-line-height: 1.25rem;
+  --mat-sys-label-large-weight: 500;
+
+  // Único estilo monoespaciado: ISBN, cédulas, cifras y marcas de tiempo.
+  --mat-sys-label-medium: 400 0.75rem / 1rem 'IBM Plex Mono', monospace;
+  --mat-sys-label-medium-font: 'IBM Plex Mono', monospace;
+  --mat-sys-label-medium-size: 0.75rem;
+  --mat-sys-label-medium-line-height: 1rem;
+  --mat-sys-label-medium-weight: 400;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    --mat-sys-primary: #a5b4fc;
+    --mat-sys-on-primary: #1e1b4b;
+    --mat-sys-primary-container: #3730a3;
+    --mat-sys-on-primary-container: #e0e7ff;
+    --mat-sys-inverse-primary: #4f46e5;
+
+    --mat-sys-secondary: #b4b7d4;
+    --mat-sys-on-secondary: #1b1b34;
+    --mat-sys-secondary-container: #3a3e5e;
+    --mat-sys-on-secondary-container: #e6e7f5;
+
+    --mat-sys-tertiary: #fdba74;
+    --mat-sys-on-tertiary: #4a1d05;
+    --mat-sys-tertiary-container: #7c2d12;
+    --mat-sys-on-tertiary-container: #ffe8d4;
+
+    --mat-sys-surface: #111225;
+    --mat-sys-background: #111225;
+    --mat-sys-on-background: #e6e7f5;
+    --mat-sys-surface-dim: #111225;
+    --mat-sys-surface-bright: #383c5a;
+    --mat-sys-surface-container-lowest: #0c0d1c;
+    --mat-sys-surface-container-low: #171930;
+    --mat-sys-surface-container: #1e2139;
+    --mat-sys-surface-container-high: #282c48;
+    --mat-sys-surface-container-highest: #333754;
+    --mat-sys-on-surface: #e6e7f5;
+    --mat-sys-surface-variant: #3a3e5e;
+    --mat-sys-on-surface-variant: #b9bcd8;
+    --mat-sys-outline: #8b8fb4;
+    --mat-sys-outline-variant: #3a3e5e;
+    --mat-sys-inverse-surface: #e6e7f5;
+    --mat-sys-inverse-on-surface: #1b1b34;
+
+    --mat-sys-error: #ffb4ab;
+    --mat-sys-on-error: #690005;
+    --mat-sys-error-container: #93000a;
+    --mat-sys-on-error-container: #ffdad6;
+  }
+}
+
+body {
+  // El tema oscuro sigue al sistema operativo; no hay interruptor.
+  color-scheme: light dark;
+
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  margin: 0;
+  height: 100%;
+}

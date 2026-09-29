@@ -1,0 +1,108 @@
+.cuerpo {
+  padding: 0 var(--sigbi-space-6) var(--sigbi-space-6);
+}
+
+.paso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-4);
+  padding-top: var(--sigbi-space-2);
+}
+
+/* La lista se desplaza dentro del paso para que el pie de acciones siga a la vista. */
+.lista {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--sigbi-radius-sm);
+}
+
+.filtros-paso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-3);
+}
+
+.elegidos {
+  padding-bottom: var(--sigbi-space-2);
+}
+
+.isbn {
+  margin-left: var(--sigbi-space-2);
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--sigbi-space-3);
+  padding-top: var(--sigbi-space-5);
+}
+
+.recuento {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+/* Terciario en vez de primario: confirmar la reserva es la acción principal del sistema. */
+.acento {
+  --mat-button-filled-container-color: var(--mat-sys-tertiary);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-tertiary);
+  --mat-button-filled-icon-color: var(--mat-sys-on-tertiary);
+}
+
+.resumen {
+  gap: var(--sigbi-space-5);
+}
+
+.bloque {
+  padding: var(--sigbi-space-4);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--sigbi-radius-md);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.bloque__titulo {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 var(--sigbi-space-2);
+}
+
+.bloque__dato {
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+.bloque__detalle {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 2px 0 0;
+}
+
+.libros {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sigbi-space-3);
+}
+
+.libros li {
+  display: flex;
+  align-items: center;
+  gap: var(--sigbi-space-3);
+  flex-wrap: wrap;
+}
+
+.libro__titulo {
+  font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface);
+}
+
+@media (max-width: 1023px) {
+  .cuerpo {
+    padding: 0 var(--sigbi-space-4) var(--sigbi-space-4);
+  }
+}

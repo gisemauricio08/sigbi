@@ -1,0 +1,175 @@
+<app-page-header
+  title="Reservas"
+  [subtitle]="$clienteFiltrado() ? 'Reservas de ' + $clienteFiltrado()!.firstName + ' ' + $clienteFiltrado()!.lastName : 'Préstamos registrados, del más reciente al más antiguo'"
+>
+  @if (!$esEstrecha()) {
+    <a class="acento" mat-flat-button routerLink="/pages/reservation-wizard">
+      <mat-icon>add</mat-icon>
+      <span>Nueva reserva</span>
+    </a>
+  }
+</app-page-header>
+
+<div class="cuerpo">
+  <section class="sigbi-panel">
+
+    @if ($hayFiltro()) {
+      <div class="sigbi-filters">
+        <mat-chip-set aria-label="Filtro activo">
+          <mat-chip (removed)="quitarFiltro()">
+            <mat-icon matChipAvatar>person</mat-icon>
+            @if ($clienteFiltrado(); as cliente) {
+              {{ cliente.firstName }} {{ cliente.lastName }}
+            } @else {
+              Filtrado por cliente
+            }
+            <button matChipRemove aria-label="Quitar el filtro por cliente">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    }
+
+    @if ($error()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span class="sigbi-spacer">No se pudieron cargar las reservas. {{ mensajeDeError($error()) }}</span>
+        <button mat-stroked-button (click)="recargar()">Reintentar</button>
+      </div>
+    } @else if ($loading()) {
+      <div class="sigbi-state" aria-live="polite">
+        <mat-spinner diameter="40" />
+        <p class="sigbi-state__text">Cargando las reservas...</p>
+      </div>
+    } @else if (!$reservations().length) {
+      <div class="sigbi-state">
+        <mat-icon class="sigbi-state__icon">event</mat-icon>
+        @if ($hayFiltro()) {
+          <h2 class="sigbi-state__title">Este cliente no tiene reservas</h2>
+          <p class="sigbi-state__text">
+            Quita el filtro para ver las reservas de todos los clientes.
+          </p>
+          <button mat-stroked-button (click)="quitarFiltro()">
+            <mat-icon>filter_alt_off</mat-icon>
+            <span>Ver todas</span>
+          </button>
+        } @else {
+          <h2 class="sigbi-state__title">Aún no hay reservas</h2>
+          <p class="sigbi-state__text">
+            Cuando registres la primera aparecerá aquí con su cliente y sus libros.
+          </p>
+          <a class="acento" mat-flat-button routerLink="/pages/reservation-wizard">
+            <mat-icon>add</mat-icon>
+            <span>Nueva reserva</span>
+          </a>
+        }
+      </div>
+    } @else {
+
+      @if ($esEstrecha()) {
+        <ul class="sigbi-tarjetas">
+          @for (reserva of $enPagina(); track reserva.idReservation) {
+            <li class="sigbi-tarjeta" [class.fila--nueva]="reserva.idReservation === $idNueva()">
+              <p class="sigbi-tarjeta__titulo">{{ nombreCliente(reserva) }}</p>
+              <p class="sigbi-tarjeta__linea">
+                <span class="sigbi-mono">{{ reserva.reservationDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </p>
+
+              <!-- En tarjeta caben todos los títulos: sin el emergente del "+N". -->
+              <div class="sigbi-tarjeta__etiquetas">
+                @for (detalle of reserva.details; track detalle.idReservationDetail) {
+                  <span class="sigbi-tag sigbi-tag--neutral">{{ detalle.book?.title }}</span>
+                }
+              </div>
+
+              <div class="sigbi-tarjeta__acciones">
+                <button mat-icon-button [attr.aria-label]="'Eliminar la reserva de ' + nombreCliente(reserva)" (click)="eliminar(reserva)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+      <div class="tabla-scroll">
+        <table mat-table class="sigbi-table" [dataSource]="dataSource">
+
+          <ng-container matColumnDef="reservationDate">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let reserva">
+              <span class="sigbi-mono">{{ reserva.reservationDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="client">
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let reserva">{{ nombreCliente(reserva) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="books">
+            <th mat-header-cell *matHeaderCellDef>Libros reservados</th>
+            <td mat-cell *matCellDef="let reserva">
+              <div class="titulos">
+                @for (detalle of titulosVisibles(reserva); track detalle.idReservationDetail) {
+                  <span class="sigbi-tag sigbi-tag--neutral">{{ detalle.book?.title }}</span>
+                }
+
+                @if (titulosRestantes(reserva).length) {
+                  <button
+                    class="sigbi-tag sigbi-tag--neutral mas"
+                    [matMenuTriggerFor]="resto"
+                    [attr.aria-label]="'Ver los otros ' + titulosRestantes(reserva).length + ' libros'"
+                  >+{{ titulosRestantes(reserva).length }}</button>
+
+                  <mat-menu #resto="matMenu">
+                    @for (detalle of titulosRestantes(reserva); track detalle.idReservationDetail) {
+                      <span class="item-menu">{{ detalle.book?.title }}</span>
+                    }
+                  </mat-menu>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="sigbi-actions-cell">Acciones</th>
+            <td mat-cell *matCellDef="let reserva" class="sigbi-actions-cell">
+              <!-- Sin edición: el backend no expone PUT de reservas. -->
+              <button
+                mat-icon-button
+                [attr.aria-label]="'Eliminar la reserva de ' + nombreCliente(reserva)"
+                matTooltip="Eliminar reserva"
+                (click)="eliminar(reserva)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let fila; columns: displayedColumns"
+            [class.fila--nueva]="fila.idReservation === $idNueva()"
+          ></tr>
+        </table>
+      </div>
+      }
+
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        [pageSize]="$pagina().tamano"
+        [length]="$reservations().length"
+        (page)="cambiarPagina($event)"
+        aria-label="Paginación de reservas"
+      />
+    }
+  </section>
+
+  @if ($esEstrecha()) {
+    <a class="sigbi-fab acento" mat-fab aria-label="Nueva reserva" routerLink="/pages/reservation-wizard">
+      <mat-icon>add</mat-icon>
+    </a>
+  }
+</div>

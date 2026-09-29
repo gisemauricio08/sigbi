@@ -1,0 +1,72 @@
+<div class="shell">
+
+  <nav class="sidenav" aria-label="Navegación principal">
+
+    <div class="marca">
+      <mat-icon class="marca__icono">menu_book</mat-icon>
+      <div>
+        <p class="marca__nombre">SIGBI</p>
+        <p class="marca__bajada">Sistema de Gestión Bibliotecaria Inteligente</p>
+      </div>
+    </div>
+
+    <mat-divider />
+
+    <ul class="destinos">
+      @for (destino of $destinos(); track destino.ruta) {
+        <li>
+          <!-- El activo se distingue por fondo y peso, no solo por color. -->
+          <a
+            class="destino"
+            [class.destino--activo]="$activo() === destino.ruta"
+            [routerLink]="destino.ruta"
+            [attr.aria-current]="$activo() === destino.ruta ? 'page' : null"
+          >
+            <mat-icon class="destino__icono">{{ destino.icono }}</mat-icon>
+            <span>{{ destino.etiqueta }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <span class="sigbi-spacer"></span>
+
+    <mat-divider />
+
+    <div class="usuario">
+      <div class="usuario__avatar" aria-hidden="true">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="usuario__datos">
+        <!-- Mientras carga se ocultan las líneas en vez de mostrar datos inventados. -->
+        @if ($cuenta()) {
+          <p class="usuario__nombre" [title]="$correo()">{{ $cuenta() }}</p>
+        }
+        @if ($perfil()) {
+          <p class="usuario__perfil">{{ $perfil() }}</p>
+        }
+      </div>
+      <button mat-icon-button aria-label="Cerrar sesión" matTooltip="Cerrar sesión" (click)="salir()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </nav>
+
+  <main class="contenido">
+    <router-outlet />
+  </main>
+
+  <nav class="barra-inferior" aria-label="Navegación principal">
+    @for (destino of $destinosMoviles(); track destino.ruta) {
+      <a
+        class="barra-inferior__destino"
+        [class.barra-inferior__destino--activo]="$activo() === destino.ruta"
+        [routerLink]="destino.ruta"
+        [attr.aria-current]="$activo() === destino.ruta ? 'page' : null"
+      >
+        <mat-icon>{{ destino.icono }}</mat-icon>
+        <span>{{ destino.etiqueta }}</span>
+      </a>
+    }
+  </nav>
+</div>

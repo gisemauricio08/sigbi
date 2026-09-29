@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>{{ $esEdicion() ? 'Editar categoría' : 'Nueva categoría' }}</h2>
+
+<form [formRoot]="categoryForm.$form" (submit)="guardar()">
+  <mat-dialog-content>
+
+    @if ($errorGeneral()) {
+      <div class="sigbi-error-banner" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ $errorGeneral() }}</span>
+      </div>
+    }
+
+    <div class="rejilla">
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Nombre</mat-label>
+          <input matInput [formField]="categoryForm.$form.name" />
+        </mat-form-field>
+        @if (mensajeDe(categoryForm.$form.name()) || errorDe('name')) {
+          <small class="sigbi-field-error">{{ errorDe('name') || mensajeDe(categoryForm.$form.name()) }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput rows="3" [formField]="categoryForm.$form.description"></textarea>
+        </mat-form-field>
+        @if (mensajeDe(categoryForm.$form.description()) || errorDe('description')) {
+          <small class="sigbi-field-error">{{ errorDe('description') || mensajeDe(categoryForm.$form.description()) }}</small>
+        }
+      </div>
+
+      <div class="campo interruptor">
+        <mat-slide-toggle [formField]="categoryForm.$form.status">Activa</mat-slide-toggle>
+        <small class="ayuda">
+          @if ($librosClasificados()) {
+            Una categoría inactiva deja de ofrecerse al clasificar libros. Sus
+            {{ $librosClasificados() }} {{ $librosClasificados() === 1 ? 'libro sigue' : 'libros siguen' }} en ella.
+          } @else {
+            Una categoría inactiva deja de ofrecerse al clasificar libros nuevos.
+          }
+        </small>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="categoryForm.isInvalid() || $guardando()">
+      <mat-icon>save</mat-icon>
+      <span>Guardar</span>
+    </button>
+  </mat-dialog-actions>
+</form>

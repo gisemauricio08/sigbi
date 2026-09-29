@@ -1,0 +1,90 @@
+<app-page-header title="Panel" subtitle="Estado del catálogo y de los préstamos">
+  <a class="acento" mat-flat-button routerLink="/pages/reservation-wizard">
+    <mat-icon>add</mat-icon>
+    <span>Nueva reserva</span>
+  </a>
+</app-page-header>
+
+<div class="cuerpo">
+
+  @if ($error()) {
+    <div class="sigbi-error-banner" role="alert">
+      <mat-icon>error</mat-icon>
+      <span class="sigbi-spacer">No se pudieron cargar los datos del panel. {{ mensajeDeError($error()) }}</span>
+      <button mat-stroked-button (click)="recargar()">Reintentar</button>
+    </div>
+  } @else if ($loading()) {
+    <div class="sigbi-panel">
+      <div class="sigbi-state" aria-live="polite">
+        <mat-spinner diameter="40" />
+        <p class="sigbi-state__text">Calculando los indicadores...</p>
+      </div>
+    </div>
+  } @else {
+
+    <section class="indicadores" aria-label="Indicadores">
+      @for (indicador of $indicadores(); track indicador.rotulo) {
+        <article class="tarjeta">
+          <div class="tarjeta__icono" [class]="'tarjeta__icono--' + indicador.tono" aria-hidden="true">
+            <mat-icon>{{ indicador.icono }}</mat-icon>
+          </div>
+          <p class="tarjeta__rotulo">{{ indicador.rotulo }}</p>
+          <p class="tarjeta__cifra">{{ indicador.cifra }}</p>
+          <p class="tarjeta__detalle">{{ indicador.detalle }}</p>
+        </article>
+      }
+    </section>
+
+    <!-- El gráfico es una tabla real: el lector de pantalla lee cada fila y la barra es su
+         representación visual. -->
+    <section class="sigbi-panel grafico">
+      <header class="grafico__cabecera">
+        <h2 class="grafico__titulo">Libros por categoría</h2>
+        <p class="grafico__bajada">{{ $totalLibros() }} libros repartidos en {{ $porCategoria().length }} categorías</p>
+      </header>
+
+      @if (!$porCategoria().length) {
+        <div class="sigbi-state">
+          <mat-icon class="sigbi-state__icon">sell</mat-icon>
+          <h3 class="sigbi-state__title">Aún no hay categorías</h3>
+          <p class="sigbi-state__text">
+            Crea la primera categoría y clasifica algún libro para que aparezca el reparto.
+          </p>
+          <a mat-stroked-button routerLink="/pages/category">
+            <mat-icon>sell</mat-icon>
+            <span>Ir a Categorías</span>
+          </a>
+        </div>
+      } @else {
+        <table class="barras">
+          <caption class="visualmente-oculto">Número de libros por categoría</caption>
+          <tbody>
+            @for (fila of $porCategoria(); track fila.idCategory) {
+              <tr>
+                <th scope="row" class="barras__nombre">
+                  {{ fila.name }}
+                  @if (!fila.status) {
+                    <span class="sigbi-tag sigbi-tag--neutral">Inactiva</span>
+                  }
+                </th>
+
+                <td class="barras__celda">
+                  <div class="barras__pista">
+                    <div
+                      class="barras__barra"
+                      [class]="tonoBarra(fila.name)"
+                      [style.width]="anchura(fila.total)"
+                      [matTooltip]="(fila.total === 1 ? '1 libro' : fila.total + ' libros') + ', ' + fila.disponibles + (fila.disponibles === 1 ? ' disponible' : ' disponibles')"
+                    ></div>
+                  </div>
+                </td>
+
+                <td class="barras__valor"><span class="sigbi-mono">{{ fila.total }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+</div>

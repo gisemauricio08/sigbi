@@ -1,0 +1,66 @@
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* dvh con vh de respaldo: en móvil `vh` no es la altura visible */
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.login-card {
+    /* Sin desplazamiento horizontal por debajo de 360 px */
+    width: min(360px, 100%);
+    padding-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.marca {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--sigbi-space-6) var(--sigbi-space-4) 0;
+}
+
+.marca__icono {
+    color: var(--mat-sys-primary);
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    /* Sin esto mat-icon deja el glifo de 40 px recortado en una caja de 24 */
+    flex-shrink: 0;
+}
+
+.marca__siglas {
+    font-family: var(--mat-sys-headline-medium-font);
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+    margin: var(--sigbi-space-3) 0 0;
+}
+
+/* Label large: a 16 px el nombre se partiría en una tarjeta de 360 px */
+.marca__nombre {
+    font: var(--mat-sys-label-large);
+    color: var(--mat-sys-on-surface);
+    margin: var(--sigbi-space-1) 0 0;
+}
+
+.marca__subtitulo {
+    font: var(--mat-sys-body-medium);
+    color: var(--mat-sys-on-surface-variant);
+    margin: var(--sigbi-space-4) 0 0;
+}
+
+.login-content {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.invalid {
+    color: var(--mat-sys-error);
+}

@@ -1,0 +1,62 @@
+<div class="login-container">
+    <mat-card class="login-card">
+        @if ($loggingIn()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+
+        <div class="marca">
+            <mat-icon class="marca__icono">menu_book</mat-icon>
+            <p class="marca__siglas">SIGBI</p>
+            <p class="marca__nombre">Sistema de Gestión Bibliotecaria Inteligente</p>
+            <p class="marca__subtitulo">Ingrese sus credenciales</p>
+        </div>
+
+        <form [formRoot]="loginForm.$form" (submit)="login()">
+            <mat-card-content class="login-content">
+                <mat-form-field>
+                    <mat-label>Correo electrónico</mat-label>
+                    <!-- autocapitalize/autocorrect/spellcheck off: Gboard "corrige" el correo y el backend responde 401 -->
+                    <input matInput type="email" inputmode="email" autocapitalize="none"
+                           autocorrect="off" spellcheck="false" autocomplete="username"
+                           [formField]="loginForm.$form.username"/>
+                    @if (loginForm.$form.username().errors().some(error => error.kind === 'required') && loginForm.$form.username().touched()) {
+                        <small class="invalid">El correo es obligatorio</small>
+                    }
+                    @if (loginForm.$form.username().errors().some(error => error.kind === 'email') && loginForm.$form.username().touched()) {
+                        <small class="invalid">El correo no tiene un formato válido</small>
+                    }
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput [type]="$verContrasena() ? 'text' : 'password'"
+                           autocomplete="current-password" [formField]="loginForm.$form.password"/>
+                    <!-- type="button": dentro de un <form>, sin type enviaría el formulario -->
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="alternarContrasena()"
+                        [attr.aria-label]="$verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                        [attr.aria-pressed]="$verContrasena()"
+                    >
+                        <mat-icon>{{ $verContrasena() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                    @if (loginForm.$form.password().errors().some(error => error.kind === 'required') && loginForm.$form.password().touched()) {
+                        <small class="invalid">La contraseña es obligatoria</small>
+                    }
+                    @if (loginForm.$form.password().errors().some(error => error.kind === 'minLength') && loginForm.$form.password().touched()) {
+                        <small class="invalid">La contraseña debe tener al menos 3 caracteres</small>
+                    }
+                </mat-form-field>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+                <button mat-flat-button type="submit" [disabled]="loginForm.isInvalid() || $loggingIn()">
+                    <span>Entrar</span>
+                    <mat-icon>login</mat-icon>
+                </button>
+            </mat-card-actions>
+        </form>
+    </mat-card>
+</div>
